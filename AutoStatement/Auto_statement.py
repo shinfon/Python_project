@@ -47,16 +47,11 @@ def main_flow():
 
     login.click()
 
-
     agreed = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "cphMain_cpContent_btnAgree"))
     )
     agreed.click()
 
-
-    # radio1 ID=cphMain_cpContent_rbSymptonN name="ctl00$ctl00$cphMain$cpContent$SymptonGroup"
-    # radio2 ID=cphMain_cpContent_rbSituationN name="ctl00$ctl00$cphMain$cpContent$SituationGroup"
-    # radio3 ID=cphMain_cpContent_rbContactN name="ctl00$ctl00$cphMain$cpContent$ContactGroup"
     radio_1 = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "cphMain_cpContent_rbSymptonN"))
     )
@@ -99,12 +94,6 @@ def main_flow():
             print("not selected!!")
     else:
         print("not selected!!")
-
-    # def check_sucess(result):
-    #     if (result < 70):
-    #         raise Exception("速度過慢!")
-    #     elif (result > 110):
-    #         raise Exception("速度太快了!")
 
 def btn_action():
     global div_btn
@@ -180,13 +169,6 @@ def input_check():
 
 
 
-# win.wm_iconify()
-
-# def unmap(self, event):
-#     win.wm_withdraw()
-# def onmap(self, event):
-#     win.wm_deiconify()
-
 #建立主視窗
 win = tk.Tk()
 win.iconbitmap("img/dog_tray.ico")
@@ -250,10 +232,3 @@ tb.pack(side="left",fill="y")
 sb.pack(side="right",fill="both")
 sb.config(command=tb.yview())
 win.mainloop()
-
-
-
-
-
-
-
