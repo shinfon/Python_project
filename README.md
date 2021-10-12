@@ -1,2 +1,2 @@
 # Python_project
-Store some  py side project that make by my own after work.
+Store my python side project after work
