@@ -7,7 +7,6 @@ from tkinter import messagebox
 from tkinter import *
 from tkinter.constants import DISABLED, FALSE, LEFT, TRUE, W
 import apscheduler.schedulers.background
-from apscheduler.schedulers import base
 from pkg_resources import *
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -100,7 +99,7 @@ def btn_action():
     hour_input = int(spinbox_1.get())
     minute_input = int(spinbox_2.get())
     sche = apscheduler.schedulers.background.BackgroundScheduler()
-    job = sche.add_job(main_flow,"cron",hour=hour_input,minute=minute_input,id='jobid')
+    sche.add_job(main_flow,"cron",hour=hour_input,minute=minute_input,id='jobid')
     
     def Run_inschedul():
         tb.config(state=tk.NORMAL)
