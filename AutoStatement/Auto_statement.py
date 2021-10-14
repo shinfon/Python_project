@@ -14,9 +14,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from apscheduler.schedulers.background import *
 
+import SysTrayIcon
+from SysTrayIcon import *
+
 div_btn = True
 
 def main_flow():
+    
     driver_path = "chromedriver/chromedriver.exe"
     option = webdriver.ChromeOptions()
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
@@ -166,10 +170,31 @@ def input_check():
     else:
         return 0
 
+def exit():
+    win.destroy()
+    sys.exit(0)
+
+def Hidden_window(icon = 'dog_tray.ico', hover_text = "SPIL-防疫聲明助手"):
+        global sty
+        menu_options = (('開始', None,btn_action),('停止', None,btn_action))
+
+        win.withdraw()   #隐藏tk窗口
+        if not sty :
+            sty = SysTrayIcon(
+                                        icon,               #图标
+                                        hover_text,         #光标停留显示文字
+                                        menu_options,       #右键菜单
+                                        on_quit = exit,   #退出调用
+                                        tk_window = win, #Tk窗口
+                                        )
+        sty.activation()
 
 
 #建立主視窗
+sty = FALSE
 win = tk.Tk()
+win.bind("<Unmap>", lambda event: Hidden_window() if win.state() == 'iconic' else False) #窗口最小化判断，可以说是调用最重要的一步
+win.protocol('WM_DELETE_WINDOW', exit)
 win.iconbitmap("img/dog_tray.ico")
 win.geometry("270x330")
 win.title("SPIL-防疫聲明助手")
