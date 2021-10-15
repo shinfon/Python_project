@@ -174,9 +174,9 @@ def exit():
     win.destroy()
     sys.exit(0)
 
-def Hidden_window(icon = 'dog_tray.ico', hover_text = "SPIL-防疫聲明助手"):
+def Hidden_window(icon = "img/dog_tray32.ico", hover_text = "SPIL-防疫聲明助手"):
         global sty
-        menu_options = (('開始', None,btn_action),('停止', None,btn_action))
+        menu_options = ()
 
         win.withdraw()   #隐藏tk窗口
         if not sty :
@@ -197,6 +197,7 @@ win.bind("<Unmap>", lambda event: Hidden_window() if win.state() == 'iconic' els
 win.protocol('WM_DELETE_WINDOW', exit)
 win.iconbitmap("img/dog_tray.ico")
 win.geometry("270x330")
+win.resizable(0,0)
 win.title("SPIL-防疫聲明助手")
 #程式區塊1
 frame1=tk.Frame(win)
