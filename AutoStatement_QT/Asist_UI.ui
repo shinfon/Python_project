@@ -136,7 +136,7 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QSpinBox" name="hr_spin">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>230</x>
       <y>80</y>
       <width>42</width>
       <height>20</height>
@@ -149,7 +149,7 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QSpinBox" name="minute_spin">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>310</x>
       <y>80</y>
       <width>42</width>
       <height>22</height>
@@ -162,9 +162,9 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QLineEdit" name="acc_input">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>230</x>
       <y>20</y>
-      <width>111</width>
+      <width>151</width>
       <height>20</height>
      </rect>
     </property>
@@ -172,9 +172,9 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QLineEdit" name="pwd_input">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>230</x>
       <y>50</y>
-      <width>111</width>
+      <width>151</width>
       <height>20</height>
      </rect>
     </property>
@@ -182,7 +182,7 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QLabel" name="hr_lab">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>280</x>
       <y>80</y>
       <width>16</width>
       <height>21</height>
@@ -195,7 +195,7 @@ background-color: rgb(204, 204, 204);</string>
    <widget class="QLabel" name="minute_lab">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>360</x>
       <y>80</y>
       <width>16</width>
       <height>21</height>
@@ -222,7 +222,7 @@ background-color: rgb(204, 204, 204);</string>
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">

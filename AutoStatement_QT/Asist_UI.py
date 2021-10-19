@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
 "border-color: rgb(104, 104, 104);\n"
 "background-color: rgb(204, 204, 204);")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("Img/dog_btn.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("img/dog_btn.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Act_btn.setIcon(icon1)
         self.Act_btn.setIconSize(QtCore.QSize(60, 60))
         self.Act_btn.setAutoDefault(False)
@@ -54,31 +54,31 @@ class Ui_MainWindow(object):
         self.time_lab.setStyleSheet("font: 75 9pt \"微軟正黑體\";")
         self.time_lab.setObjectName("time_lab")
         self.hr_spin = QtWidgets.QSpinBox(self.centralwidget)
-        self.hr_spin.setGeometry(QtCore.QRect(250, 80, 42, 20))
+        self.hr_spin.setGeometry(QtCore.QRect(230, 80, 42, 20))
         self.hr_spin.setStyleSheet("font: 9pt \"細明體\";")
         self.hr_spin.setObjectName("hr_spin")
         self.minute_spin = QtWidgets.QSpinBox(self.centralwidget)
-        self.minute_spin.setGeometry(QtCore.QRect(320, 80, 42, 22))
+        self.minute_spin.setGeometry(QtCore.QRect(310, 80, 42, 22))
         self.minute_spin.setStyleSheet("font: 9pt \"新細明體\";")
         self.minute_spin.setObjectName("minute_spin")
         self.acc_input = QtWidgets.QLineEdit(self.centralwidget)
-        self.acc_input.setGeometry(QtCore.QRect(270, 20, 111, 20))
+        self.acc_input.setGeometry(QtCore.QRect(230, 20, 151, 20))
         self.acc_input.setObjectName("acc_input")
         self.pwd_input = QtWidgets.QLineEdit(self.centralwidget)
-        self.pwd_input.setGeometry(QtCore.QRect(270, 50, 111, 20))
+        self.pwd_input.setGeometry(QtCore.QRect(230, 50, 151, 20))
         self.pwd_input.setObjectName("pwd_input")
         self.hr_lab = QtWidgets.QLabel(self.centralwidget)
-        self.hr_lab.setGeometry(QtCore.QRect(300, 80, 16, 21))
+        self.hr_lab.setGeometry(QtCore.QRect(280, 80, 16, 21))
         self.hr_lab.setObjectName("hr_lab")
         self.minute_lab = QtWidgets.QLabel(self.centralwidget)
-        self.minute_lab.setGeometry(QtCore.QRect(370, 80, 16, 21))
+        self.minute_lab.setGeometry(QtCore.QRect(360, 80, 16, 21))
         self.minute_lab.setObjectName("minute_lab")
         self.msg_box = QtWidgets.QTextBrowser(self.centralwidget)
         self.msg_box.setGeometry(QtCore.QRect(20, 130, 361, 221))
         self.msg_box.setObjectName("msg_box")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 21))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
@@ -101,7 +101,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(self,MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -118,8 +118,6 @@ class Ui_MainWindow(object):
         self.action.setText(_translate("MainWindow", "開始/停止"))
         self.action_2.setText(_translate("MainWindow", "退出"))
         self.action_3.setText(_translate("MainWindow", "關於"))
-
-
 
 
 if __name__ == "__main__":
