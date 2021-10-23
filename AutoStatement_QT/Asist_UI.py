@@ -9,16 +9,32 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import os
+import sys
 
+
+# def base_path(path):
+#     if getattr(sys, 'frozen', False):
+#         basedir = sys._MEIPASS
+#     else:
+#         basedir = os.path.dirname(__file__)
+#     return os.path.join(basedir,path)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        if getattr(sys, 'frozen', False):
+            Img1_path = os.path.join(sys._MEIPASS, "dog_tray.ico")
+            Img2_path = os.path.join(sys._MEIPASS, "dog_btn.png")
+        else:
+            Img1_path = os.path.join(os.path.dirname(__file__), "dog_tray.ico")
+            Img2_path = os.path.join(os.path.dirname(__file__), "dog_btn.png")
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(400, 400)
         MainWindow.setMinimumSize(QtCore.QSize(400, 400))
         MainWindow.setMaximumSize(QtCore.QSize(400, 400))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("img/dog_tray.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(Img1_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("")
         MainWindow.setTabShape(QtWidgets.QTabWidget.Triangular)
@@ -30,7 +46,7 @@ class Ui_MainWindow(object):
 "border-color: rgb(104, 104, 104);\n"
 "background-color: rgb(204, 204, 204);")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("img/dog_btn.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(Img2_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.Act_btn.setIcon(icon1)
         self.Act_btn.setIconSize(QtCore.QSize(60, 60))
         self.Act_btn.setAutoDefault(False)

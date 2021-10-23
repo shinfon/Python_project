@@ -1,4 +1,5 @@
 from os import sep
+import os
 import sys
 import re
 import time
@@ -10,7 +11,7 @@ from apscheduler import schedulers
 import apscheduler.schedulers.background
 from pkg_resources import *
 from selenium import webdriver
-from selenium.webdriver.support import ui
+from selenium.webdriver.support import ui, wait
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -25,11 +26,17 @@ div_btn = True
 
 def main_flow():
     
-    driver_path = "chromedriver/chromedriver.exe"
     option = webdriver.ChromeOptions()
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     option.add_argument("--headless")
-    driver = webdriver.Chrome(driver_path, chrome_options=option)
+
+    if getattr(sys, 'frozen', False):
+        driver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
+        driver = webdriver.Chrome(driver_path, chrome_options=option)
+    else:
+        driver = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"), chrome_options=option)
+    
+
     acc_input=Ui.acc_input.text()
     pwd_input=Ui.pwd_input.text()
     result = ""
@@ -107,7 +114,8 @@ def btn_action():
     hour_input = int(Ui.hr_spin.value())
     minute_input = int(Ui.minute_spin.value())
     sche = apscheduler.schedulers.qt.QtScheduler()
-    sche.add_job(main_flow,"cron",hour=hour_input,minute=minute_input,id='jobid')
+    Job = sche.add_job(main_flow,"cron",hour=hour_input,minute=minute_input,id='jobid')
+    sche.daemonic = False
     def Run_inschedul():
         Ui.msg_box.append("運行中.....\n")
         Ui.msg_box.append("預計自動聲明時間為每日 :"+str(hour_input) + "時" + str(minute_input) + "分\n")
@@ -117,10 +125,10 @@ def btn_action():
         Ui.hr_spin.setReadOnly(TRUE)
         Ui.minute_spin.setReadOnly(TRUE)
         sche.start()
-
+        
 
     def stop_schedul():
-        sche.remove_job('jobid')
+        Job.remove()
         Ui.msg_box.append(".........終止運行!\n")
         Ui.acc_input.setReadOnly(FALSE)
         Ui.pwd_input.setReadOnly(FALSE)
@@ -180,12 +188,19 @@ def input_check():
 
 
 class TrayIcon(QtWidgets.QSystemTrayIcon):
+
     def __init__(self,MainWindow,parent=None):
         super(TrayIcon, self).__init__(parent)
         self.ui = MainWindow
         self.createMenu()
     
     def createMenu(self):
+        if getattr(sys, 'frozen', False):
+            Img1_path = os.path.join(sys._MEIPASS, "dog_tray.ico")
+
+        else:
+            Img1_path = os.path.join(os.path.dirname(__file__), "dog_tray.ico")
+
         self.menu = QtWidgets.QMenu()
         self.showAction1 = QtWidgets.QAction("開啟", self, triggered=self.show_window)
         # self.showAction2 = QtWidgets.QAction("顯示資訊", self,triggered=self.showMsg)
@@ -196,7 +211,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.setContextMenu(self.menu)
 
         #設定圖案
-        self.setIcon(QtGui.QIcon("img/dog_tray.ico"))
+        self.setIcon(QtGui.QIcon(Img1_path))
         self.icon = self.MessageIcon()
 
         #連結滑鼠點擊訊號
@@ -217,7 +232,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
     #鼠标点击icon传递的信号会带有一个整形的值,1是表示单击右键,2是双击,3是单击左键,4是用鼠标中键点击
     def onIconClicked(self, reason):
         if reason == 2 or reason == 3:
-            # self.showMessage("Message", "skr at here", self.icon)
+            # self.showMessage("Message", "message  here", self.icon)
             if self.ui.isMinimized() or not self.ui.isVisible():
 
                 self.ui.showNormal()
@@ -225,7 +240,7 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
                 self.ui.setWindowFlags(QtCore.Qt.Window)
                 self.ui.show()
             else:
-                #若不是最小化,则最小化
+                #若不是最小化,則最小化
                 self.ui.close()
                 # self.ui.showMinimized()
                 # self.ui.setWindowFlags(QtCore.Qt.SplashScreen)
@@ -246,7 +261,7 @@ class Dialog(QtWidgets.QMainWindow):
             sys.exit(app.exec_())
         else:
             event.ignore()
-            # 最小化到托盘
+            # 最小化
             MainWindow.setWindowFlags(QtCore.Qt.SplashScreen | QtCore.Qt.FramelessWindowHint)
             MainWindow.showMinimized()
             
