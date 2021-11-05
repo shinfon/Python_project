@@ -1,7 +1,8 @@
 import time
 import os
+import sys
 import wget 
-import requests
+import cv2
 from selenium import webdriver
 from selenium.webdriver.common import by
 from selenium.webdriver.common import action_chains
@@ -10,119 +11,141 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from bs4 import BeautifulSoup as bs
-import json
+from PyQt5 import QtCore , QtGui , QtWidgets
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
+from PyQt5.QtCore import pyqtSlot
+import IG_crawler_ui
 
 
-keyword = "#ahegao"
-data_path = "D:/Jhongfu/python/data"
-# roll_cnt = 10
-pic_quantity = 80
-src_list = []
-option = webdriver.ChromeOptions()
-option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
-# option.add_argument("--headless")
-Driver_Path = "D:/Jhongfu/python/Tools/chromedriver.exe"
+class IGcrawler():
+    def __init__(self,account,password,keyword,quantity,path):
+        self.account = account
+        self.password = password
+        self.src_list = []
+        self.keyword = keyword
+        self.quantity = quantity
+        self.path = path
+        self.link = "https://www.instagram.com/"
+        self.driver_path =  "D:/Jhongfu/python/Tools/chromedriver.exe"
+        self.option = webdriver.ChromeOptions().add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
+        self.driver = webdriver.Chrome(self.driver_path,chrome_options=self.option)
 
-driver = webdriver.Chrome(Driver_Path,chrome_options=option)
-driver.get("https://www.instagram.com/")
+    def login_acc(self):
+        self.driver.get(self.link)
+        WebDriverWait(self.driver,10).until(
+            EC.presence_of_element_located((By.NAME,"username"))
+        )
+        self.acc = self.driver.find_element_by_name("username")
+        self.pwd = self.driver.find_element_by_name("password")
+        self.acc.clear()
+        self.pwd.clear()
+        self.acc.send_keys(self.account)
+        self.pwd.send_keys(self.password)
+        self.login = WebDriverWait(self.driver,10).until(
+            EC.element_to_be_clickable((By.XPATH,'//*[@id="loginForm"]/div/div[3]/button'))
+        )
+        self.login.click()
 
-def login_acc():
-    WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.NAME,"username"))
-    )
-    acc = driver.find_element_by_name("username")
-    pwd = driver.find_element_by_name("password")
-    acc.clear()
-    pwd.clear()
-    acc.send_keys("bboyjhongfu")
-    pwd.send_keys("blue337home")
-    # pwd.send_keys(Keys.RETURN)
-    # WebDriverWait(driver,10).until(
-    #     EC.presence_of_element_located((By.XPATH,'//*[@id="loginForm"]/div/div[3]/button'))
-    # )
-    login = WebDriverWait(driver,10).until(
-        EC.element_to_be_clickable((By.XPATH,'//*[@id="loginForm"]/div/div[3]/button'))
-    )
-    login.click()
-    # action_login_btn = ActionChains(driver)
-    # action_login_btn.move_to_element(login)
-    # action_login_btn.click()
+    def query_keyword(self):
+        self.query = WebDriverWait(self.driver,10).until(
+            EC.presence_of_element_located((By.XPATH,'//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input'))
+        )
+        self.query.clear()
+        self.query.send_keys(self.keyword)
+        self.query.send_keys(Keys.RETURN)
+        
+        self.sel_1 = WebDriverWait(self.driver,10).until(
+            EC.presence_of_element_located((By.XPATH,'//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[3]/div/div[2]/div/div[1]/a/div/div[1]/div'))
+        )
+        self.move_action = ActionChains(self.driver)
+        self.move_action.move_to_element(self.sel_1)
+        self.move_action.click()
+        self.move_action.perform()
+    def scroll_page(self):
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-20);")
+        time.sleep(2)
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-def query_keyword():
-    query = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.XPATH,'//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input'))
-    )
-    query.clear()
-    query.send_keys(keyword)
-    query.send_keys(Keys.RETURN)
-    sel_1 = WebDriverWait(driver,10).until(
-        EC.presence_of_element_located((By.XPATH,'//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[3]/div/div[2]/div/div[1]/a/div/div[1]/div'))
-    )
-    move_action = ActionChains(driver)
-    move_action.move_to_element(sel_1)
-    move_action.click()
-    move_action.perform()
+    def path_check(self):
+        if not os.path.isdir(os.path.join(self.path,self.keyword)):
+            os.mkdir(os.path.join(self.path,self.keyword))
 
-def scroll_page():
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(2)
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight-20);")
-    time.sleep(2)
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    def download_list_data(self):
+        self.cnt = 0
+        self.path_check()
+        print("共計 {:d} 筆資料,開始下載...".format(len(self.src_list)))
+        for index in self.src_list:
+            self.save_as = os.path.join(self.path,self.keyword,self.keyword + str(self.cnt) + '.jpg')
+            wget.download(index,self.save_as)
+            # time.sleep(1)
+            self.cnt += 1
 
-def path_check():
-    if not os.path.isdir(os.path.join(data_path,keyword)):
-       os.mkdir(os.path.join(data_path,keyword))
+    def get_data_list(self):
+        self.lis_quan =0
+        self.imgs = []
+        #video class="tWeCl"
+        
+        print("開始獲取資料列表....\n")
 
+        while(self.lis_quan < self.quantity):
+            time.sleep(4)
+            self.imgs.extend(self.driver.find_elements_by_class_name("FFVAD"))
 
-def download_list_data():
-    global src_list
-    cnt = 0
-    path_check()
-    print("共計 {:d} 筆資料,開始下載...".format(len(src_list)))
-    for index in src_list:
-        save_as = os.path.join(data_path,keyword,keyword + str(cnt) + '.jpg')
-        wget.download(index,save_as)
-        time.sleep(1)
-        cnt += 1
-
-
-def get_data_list():
-    global src_list
-    lis_quan =0
-    cnt = 0
-    imgs = []
-    #video class="tWeCl"
+            # imgs = WebDriverWait(driver.current_url,10).until(
+            #     EC.presence_of_all_elements_located((By.CLASS_NAME,"FFVAD"))
+            # )
+            print("預計獲取:{:s} 筆...目前共獲取:{:s} 筆 \n".format(str(self.quantity),str(self.lis_quan)))
+            for index in range(len(self.imgs)):
+                img_url = self.imgs.pop().get_attribute("src")
+                if (img_url != None) & (img_url not in self.src_list):
+                    if len(self.src_list) < self.quantity:
+                        self.src_list.append(img_url)
+                    else:
+                        break
     
-    print("開始獲取資料列表....\n")
+            self.scroll_page()
+            self.lis_quan = len(self.src_list)
 
-    while(lis_quan < pic_quantity):
-        time.sleep(4)
-        imgs.extend(driver.find_elements_by_class_name("FFVAD"))
+def Show_img():
+    img = cv2.imread("dog.jpg")
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    x = img.shape[1]
+    y = img.shape[0]
+    # bytesPerline = 3 * width
+    qImg = QImage(img, x, y, QImage.Format_RGB888)
+    pix = QPixmap.fromImage(qImg)
+    item=QGraphicsPixmapItem(pix) 
+    scene=QGraphicsScene()   
+    scene.addItem(item)
+    ui.graphicsView.setScene(scene)
 
-        # imgs = WebDriverWait(driver.current_url,10).until(
-        #     EC.presence_of_all_elements_located((By.CLASS_NAME,"FFVAD"))
-        # )
-        print("預計獲取:{:s} 筆...目前共獲取:{:s} 筆 \n".format(str(pic_quantity),str(lis_quan)))
-        for index in range(len(imgs)):
-            img_url = imgs.pop().get_attribute("src")
-            if (img_url != None) & (img_url not in src_list):
-                if len(src_list) < pic_quantity:
-                    src_list.append(img_url)
-                else:
-                    break
-  
-        scroll_page()
-        lis_quan = len(src_list)
-        cnt += 1
-    
-    
+def slot_btn_chooseDir():
+    dir_choose = QtWidgets.QFileDialog.getExistingDirectory(MainWindow,'選擇資料夾',"C:\\")
+    if dir_choose == "":
+        ui.step2_input.setText("請點選路徑")
+        return
+    ui.step2_input.setText(dir_choose)
 
-login_acc()
-query_keyword()
-get_data_list()
-download_list_data()
+def main_flow():
+    crawler = IGcrawler("yourAccount","yourPassword","#yourKeyword",100,"yourSavePath")
+    crawler.login_acc()
+    crawler.query_keyword()
+    crawler.get_data_list()
+    crawler.download_list_data()
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = IG_crawler_ui.Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    ui.Path_btn.clicked.connect(slot_btn_chooseDir)
+    ui.Start_btn.clicked.connect(Show_img)
+    MainWindow.setWindowFlags(QtCore.Qt.Window)
+    MainWindow.show()
+    sys.exit(app.exec_())
 
 
 

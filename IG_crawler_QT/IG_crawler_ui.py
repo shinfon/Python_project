@@ -100,7 +100,6 @@ class Ui_MainWindow(object):
         self.Path_btn = QtWidgets.QPushButton(self.centralwidget)
         self.Path_btn.setGeometry(QtCore.QRect(180, 230, 51, 21))
         self.Path_btn.setObjectName("Path_btn")
-        self.Path_btn.clicked.connect(self.slot_btn_chooseDir)
         self.step2_input = QtWidgets.QLineEdit(self.centralwidget)
         self.step2_input.setGeometry(QtCore.QRect(20, 230, 151, 21))
         self.step2_input.setStyleSheet("background-color: rgb(218, 218, 218);")
@@ -153,14 +152,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def slot_btn_chooseDir(self):
-        # ocu_path = os.path.dirname(__file__)
-        options = QtWidgets.QFileDialog.Options()
-        dir_choose = QtWidgets.QFileDialog.getExistingDirectory(None,'選擇資料夾',"C:\\")
-        if dir_choose == "":
-            self.step2_input.setText("請點選路徑")
-            return
-        self.step2_input.setText(dir_choose)
+
         
         
 
