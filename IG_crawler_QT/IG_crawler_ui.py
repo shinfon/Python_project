@@ -9,19 +9,14 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
-import os
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(688, 468)
+        MainWindow.resize(688, 466)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(260, 30, 411, 351))
-        self.graphicsView.setStyleSheet("")
-        self.graphicsView.setObjectName("graphicsView")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(10, 40, 221, 91))
         self.frame.setStyleSheet("")
@@ -104,7 +99,6 @@ class Ui_MainWindow(object):
         self.step2_input.setGeometry(QtCore.QRect(20, 230, 151, 21))
         self.step2_input.setStyleSheet("background-color: rgb(218, 218, 218);")
         self.step2_input.setObjectName("step2_input")
-        self.step2_input.setReadOnly(True)
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(10, 350, 221, 71))
         self.textBrowser.setObjectName("textBrowser")
@@ -124,6 +118,11 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
+        self.preview_area_lab = QtWidgets.QLabel(self.centralwidget)
+        self.preview_area_lab.setGeometry(QtCore.QRect(260, 30, 411, 351))
+        self.preview_area_lab.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.preview_area_lab.setText("")
+        self.preview_area_lab.setObjectName("preview_area_lab")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 688, 21))
@@ -147,14 +146,9 @@ class Ui_MainWindow(object):
         self.menu_2.addAction(self.action)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
-        #設定選擇資料夾按鈕
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-
-        
-        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -172,7 +166,7 @@ class Ui_MainWindow(object):
         self.Start_btn.setText(_translate("MainWindow", "Start"))
         self.menu.setTitle(_translate("MainWindow", "檔案"))
         self.menu_2.setTitle(_translate("MainWindow", "關於"))
-        self.actionStart_Stop.setText(_translate("MainWindow", "Start/Stop"))
+        self.actionStart_Stop.setText(_translate("MainWindow", "Start"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.action.setText(_translate("MainWindow", "說明"))
 
