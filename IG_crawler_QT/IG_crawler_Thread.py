@@ -57,6 +57,9 @@ class IGcrawler(Ui_MainWindow):
             有任何問題請聯繫作者:John'''
         QMessageBox.about(self.MainWindow,"關於本程式",msg)
     
+    def msg_critical(self):
+        cri = '''操作逾時,請確認登入資訊&網路狀態'''
+        QMessageBox.critical(self.MainWindow,"執行錯誤",cri)
     def end_pro(self):
         sys.exit(0)
 
@@ -93,26 +96,36 @@ class IGcrawler(Ui_MainWindow):
         img = QImage(filename)
         result = img.scaled(ui.preview_area_lab.width(),ui.preview_area_lab.height(),Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
         ui.preview_area_lab.setPixmap(QPixmap.fromImage(result))
+    
+    def Thread_stopped(self,sta):
+        if sta == 0:
+            self.Acc_input.setReadOnly(True)
+            self.Pwd_input.setReadOnly(True)
+            self.step1_input.setReadOnly(True)
+            self.spinBox.setReadOnly(True)
+            self.step2_input.setReadOnly(True)
+        elif sta == 1:
+            self.Acc_input.setReadOnly(False)
+            self.Pwd_input.setReadOnly(False)
+            self.step1_input.setReadOnly(False)
+            self.spinBox.setReadOnly(False)
+            self.step2_input.setReadOnly(False)
 
     def Thread_Run(self):
-        self.Acc_input.setReadOnly(TRUE)
-        self.Pwd_input.setReadOnly(TRUE)
-        self.step1_input.setReadOnly(TRUE)
-        self.spinBox.setReadOnly(TRUE)
-        self.step2_input.setReadOnly(TRUE)
+        
         self.ThreadRun = Thread()
         self.ThreadRun.img_cnt_signal.connect(self.get_index)
         self.ThreadRun.pic_path_signal.connect(self.get_path)
         self.ThreadRun.getdata_Info_signal.connect(self.Status_show)
         self.ThreadRun.process_total_signal.connect(self.set_ProcessTotal)
         self.ThreadRun.download_progress_signal.connect(self.Download_peocess)
-
+        self.ThreadRun.critical_signal.connect(self.msg_critical)
+        self.ThreadRun.stopped_signal.connect(self.Thread_stopped)
         self.ThreadRun.start()
-        self.Acc_input.setReadOnly(FALSE)
-        self.Pwd_input.setReadOnly(FALSE)
-        self.step1_input.setReadOnly(FALSE)
-        self.spinBox.setReadOnly(FALSE)
-        self.step2_input.setReadOnly(FALSE)
+
+
+
+  
 
 
 
@@ -124,6 +137,9 @@ class Thread(QThread):
     getdata_Info_signal = pyqtSignal(str)
     download_progress_signal = pyqtSignal(int)
     process_total_signal = pyqtSignal(int)
+    critical_signal = pyqtSignal()
+    stopped_signal = pyqtSignal(int)
+    # threadSta = pyqtSignal()
     def __init__(self):
         super(Thread,self).__init__()
         self.account = ui.Acc_input.text()
@@ -136,7 +152,7 @@ class Thread(QThread):
         self.img_path = []
         self.img_cnt = 0
         self.img_index = 0
-        
+        self.Thread_stat = 0
         
         self.link = "https://www.instagram.com/"
         self.driver_path =  "D:/Jhongfu/python/Tools/chromedriver.exe"
@@ -231,7 +247,7 @@ class Thread(QThread):
             self.img_index = self.img_cnt
             self.img_cnt += 1
             self.download_progress_signal.emit(self.img_cnt)
-        self.img_cnt_signal.emit(self.img_cnt)
+        self.img_cnt_signal.emit(self.img_cnt-1)
         self.pic_path_signal.emit(self.img_path)
         self.getdata_Info_signal.emit("圖片抓取完成!")
 
@@ -255,13 +271,18 @@ class Thread(QThread):
 
 
 
-
     def run(self):
-        self.login_acc()
-        self.query_keyword()
-        self.get_data_list()
-        self.path_check()
-        self.Download_data()
+        try:
+            self.stopped_signal.emit(0)
+            self.login_acc()
+            self.query_keyword()
+            self.get_data_list()
+            self.path_check()
+            self.Download_data()
+            self.stopped_signal.emit(1)
+        except:
+            self.getdata_Info_signal.emit("執行錯誤,程式終止..")
+            self.critical_signal.emit()
     
 
 
