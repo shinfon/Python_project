@@ -13,13 +13,6 @@ import os
 import sys
 
 
-# def base_path(path):
-#     if getattr(sys, 'frozen', False):
-#         basedir = sys._MEIPASS
-#     else:
-#         basedir = os.path.dirname(__file__)
-#     return os.path.join(basedir,path)
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if getattr(sys, 'frozen', False):

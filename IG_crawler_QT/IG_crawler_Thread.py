@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from webdriver_manager.chrome import ChromeDriverManager
 from PyQt5 import QtCore , QtGui , QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QLineEdit, QMessageBox
@@ -31,6 +32,8 @@ class IGcrawler(Ui_MainWindow):
         self.Down_btn.clicked.connect(self.down_page)
         self.Path_btn.clicked.connect(self.slot_btn_chooseDir)
         self.action.triggered.connect(self.msg_info)
+        self.spinBox.setMaximum(1000)
+        self.spinBox.setMinimum(1)
         self.actionStart_Stop.triggered.connect(self.Thread_Run)
         self.actionExit.triggered.connect(self.end_pro)
         self.Pwd_input.setEchoMode(QLineEdit.Password)
@@ -153,13 +156,17 @@ class Thread(QThread):
         self.img_cnt = 0
         self.img_index = 0
         self.Thread_stat = 0
-        
-        self.link = "https://www.instagram.com/"
-        self.driver_path =  "D:/Jhongfu/python/Tools/chromedriver.exe"
         self.option = webdriver.ChromeOptions()
         self.option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
         self.option.add_argument("--headless")
-        self.driver = webdriver.Chrome(self.driver_path,chrome_options=self.option)
+        self.link = "https://www.instagram.com/"
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=self.option)
+        # if getattr(sys, 'frozen', False):
+        #     self.driver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
+        #     self.driver = webdriver.Chrome(self.driver_path, chrome_options=self.option)
+        # else:
+        #     self.driver = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"), chrome_options=self.option)
+        
 
     def login_acc(self):
         self.getdata_Info_signal.emit("取得頁面資訊中....\n")
@@ -232,6 +239,7 @@ class Thread(QThread):
     
             self.scroll_page()
             self.lis_quan = len(self.src_list)
+            self.driver.quit()
 
     def Download_data(self):
         # print("共計 {:d} 筆資料,開始下載...".format(len(self.src_list)))

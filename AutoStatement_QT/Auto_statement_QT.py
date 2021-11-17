@@ -15,6 +15,7 @@ from selenium.webdriver.support import ui, wait
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 from apscheduler import schedulers
 from apscheduler.schedulers.background import *
 from apscheduler.schedulers.qt import QtScheduler
@@ -29,12 +30,12 @@ def main_flow():
     option = webdriver.ChromeOptions()
     option.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     option.add_argument("--headless")
-
-    if getattr(sys, 'frozen', False):
-        driver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
-        driver = webdriver.Chrome(driver_path, chrome_options=option)
-    else:
-        driver = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"), chrome_options=option)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=option)
+    # if getattr(sys, 'frozen', False):
+    #     driver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
+    #     driver = webdriver.Chrome(driver_path, chrome_options=option)
+    # else:
+    #     driver = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"), chrome_options=option)
     
 
     acc_input=Ui.acc_input.text()
@@ -114,8 +115,9 @@ def btn_action():
     hour_input = int(Ui.hr_spin.value())
     minute_input = int(Ui.minute_spin.value())
     sche = apscheduler.schedulers.qt.QtScheduler()
+    # sche = apscheduler.schedulers.background.BackgroundScheduler()
     Job = sche.add_job(main_flow,"cron",hour=hour_input,minute=minute_input,id='jobid')
-    sche.daemonic = False
+    sche.daemon = False
     def Run_inschedul():
         Ui.msg_box.append("運行中.....\n")
         Ui.msg_box.append("預計自動聲明時間為每日 :"+str(hour_input) + "時" + str(minute_input) + "分\n")
@@ -127,7 +129,10 @@ def btn_action():
         sche.start()
         
 
+        
+
     def stop_schedul():
+        # sche.shutdown(wait=False)
         Job.remove()
         Ui.msg_box.append(".........終止運行!\n")
         Ui.acc_input.setReadOnly(FALSE)
@@ -170,8 +175,8 @@ def end_pro():
 def input_check():
     acc_check=Ui.acc_input.text()
     pwd_check=Ui.pwd_input.text()
-    acc_stander = r'\d{6}'
-    pwd_stander = r'\d{5}'
+    acc_stander = r'\d{6}$'
+    pwd_stander = r'\d{5}$'
     acc_feedbk = re.match(acc_stander,acc_check)
     pwd_feedbk = re.match(pwd_stander,pwd_check)
     if ( acc_feedbk == None or pwd_feedbk == None):

@@ -9,12 +9,20 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import os
+import sys
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        if getattr(sys, 'frozen', False):
+            self.Img1_path = os.path.join(sys._MEIPASS, "dog_tray.ico")
+        else:
+            self.Img1_path = os.path.join(os.path.dirname(__file__), "dog_tray.ico")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(688, 466)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(self.Img1_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.frame = QtWidgets.QFrame(self.centralwidget)
