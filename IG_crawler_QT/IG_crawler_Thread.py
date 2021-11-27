@@ -1,3 +1,4 @@
+import random
 import time
 import os
 import sys
@@ -17,7 +18,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QLineEdit, QMessageBox
 from PyQt5.QtCore import *
 from IG_crawler_ui import Ui_MainWindow
-
+from random import randint
 
 
 class IGcrawler(Ui_MainWindow):
@@ -63,6 +64,11 @@ class IGcrawler(Ui_MainWindow):
     def msg_critical(self):
         cri = '''操作逾時,請確認登入資訊&網路狀態'''
         QMessageBox.critical(self.MainWindow,"執行錯誤",cri)
+        self.Acc_input.setReadOnly(False)
+        self.Pwd_input.setReadOnly(False)
+        self.step1_input.setReadOnly(False)
+        self.spinBox.setReadOnly(False)
+        self.step2_input.setReadOnly(False)
     def end_pro(self):
         sys.exit(0)
 
@@ -205,10 +211,11 @@ class Thread(QThread):
 
     def scroll_page(self):
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)
+        time.sleep(random.randint(2,6))
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-20);")
-        time.sleep(2)
+        time.sleep(random.randint(2,6))
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(random.randint(2,6))
 
     def path_check(self):
         if not os.path.isdir(os.path.join(self.path,self.keyword)):
@@ -221,9 +228,8 @@ class Thread(QThread):
         # print("開始獲取資料列表....\n")
         self.getdata_Info_signal.emit("開始獲取資料列表....\n")
         while(self.lis_quan < self.quantity):
-            time.sleep(4)
+            time.sleep(random.randint(1,4))
             self.imgs.extend(self.driver.find_elements_by_class_name("FFVAD"))
-
             # imgs = WebDriverWait(driver.current_url,10).until(
             #     EC.presence_of_all_elements_located((By.CLASS_NAME,"FFVAD"))
             # )
@@ -239,7 +245,7 @@ class Thread(QThread):
     
             self.scroll_page()
             self.lis_quan = len(self.src_list)
-            self.driver.quit()
+        self.driver.quit()
 
     def Download_data(self):
         # print("共計 {:d} 筆資料,開始下載...".format(len(self.src_list)))
@@ -288,7 +294,8 @@ class Thread(QThread):
             self.path_check()
             self.Download_data()
             self.stopped_signal.emit(1)
-        except:
+        except Exception as err :
+            print(err)
             self.getdata_Info_signal.emit("執行錯誤,程式終止..")
             self.critical_signal.emit()
     
